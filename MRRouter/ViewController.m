@@ -29,9 +29,9 @@
     };
     [MRRouter sharedInstance].postfix = @"ViewController";
     
-//    [MRRouter registerURL:TEST_URL executingBlock:^(NSString *sourceURL, NSDictionary *parameters) {
-//        [self.navigationController pushViewController:[[FreeMarketViewController alloc] init] animated:YES];
-//    }];
+    [MRRouter registerURL:TEST_URL executingBlock:^(NSString *sourceURL, NSDictionary *parameters) {
+        [self.navigationController pushViewController:[[FreeMarketViewController alloc] init] animated:YES];
+    }];
     [MRRouter map:TEST_URL4 toClassName:@"HelloViewController"];
 }
 

@@ -39,7 +39,6 @@ MRRouter以block的接口为基础，提供了object和URL的映射关系，降�
     + (Class)matchClassWithURL:(NSString *)URLPattern;
 ```
 
-It's recommended to use [stringsdict](https://developer.apple.com/library/ios/documentation/MacOSX/Conceptual/BPInternational/StringsdictFileFormat/StringsdictFileFormat.html) to easily translate plural forms in any language.
 
 
 ## Requirements

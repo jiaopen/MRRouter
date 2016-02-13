@@ -64,6 +64,13 @@ typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 + (void)removeURL:(NSString *)URLPattern;
 
 /**
+ *  Returns a Boolean value indicating whether the URL can be routed.
+ *
+ *  @param URLPattern URL will be routed.
+ */
++ (BOOL)canOpenURL:(NSString *)URLPattern;
+
+/**
  *  Load the Class-URL map when setting this property.
  */
 @property (nonatomic, strong) NSString *mapFileName;

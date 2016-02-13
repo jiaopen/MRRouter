@@ -76,7 +76,11 @@
 @implementation NSURL (MRBody)
 
 - (NSString *)mr_body {
-    return [NSString stringWithFormat:@"%@://%@%@", self.scheme, self.host, self.path];
+    return [NSString stringWithFormat:@"%@://%@%@", self.scheme, self.host?:@"", self.path?:@""];
+}
+
+- (NSString *)mr_fullScheme {
+    return self.scheme.length ? [NSString stringWithFormat:@"%@://", self.scheme] : self.scheme;
 }
 
 @end
@@ -165,6 +169,9 @@
 }
 
 + (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock{
+    if (!URLPattern.length && ![self canOpenURL:URLPattern]) {
+        return;
+    }
     NSURL* URL = [NSURL URLWithString:URLPattern];
     
     NSMutableDictionary *URLParameters = [NSMutableDictionary dictionary];
@@ -201,9 +208,12 @@
 }
 
 - (_MRRoute *) routeWithURL:(NSString *)URLPattern {
+    if (!URLPattern.length) {
+        return nil;
+    }
     NSMutableDictionary<NSString *, _MRRoute *> *routes = [MRRouter sharedInstance].routes;
     NSURL* URL = [NSURL URLWithString:URLPattern];
-    _MRRoute* route = routes[URL.mr_body];
+    _MRRoute* route = routes[URL.mr_body] ? : routes[URL.mr_fullScheme];
     if (!route) {
         route = [_MRRoute routeWithURL:URLPattern];
         route.className = [[MRRouter sharedInstance] assembledClassNameWithString:route.host];
@@ -228,14 +238,35 @@
 }
 
 + (void)registerURL:(NSString *)URLPattern executingBlock:(MRExecutingBlock)executingBlock {
+    if (!URLPattern.length) {
+        return;
+    }
     _MRRoute* route = [_MRRoute routeWithURL:URLPattern];
     route.executingBlock = executingBlock;
-    route.className = [[MRRouter sharedInstance] assembledClassNameWithString:route.host];
+    if (route.host) {
+        route.className = [[MRRouter sharedInstance] assembledClassNameWithString:route.host];
+    }
     [[MRRouter sharedInstance].routes setObject:route forKey:[NSURL URLWithString:URLPattern].mr_body];
 }
 
 + (void)removeURL:(NSString *)URLPattern {
     [[MRRouter sharedInstance].routes removeObjectForKey:URLPattern];
+}
+
++ (BOOL)canOpenURL:(NSString *)URLPattern {
+    if (!URLPattern.length) {
+        return NO;
+    }
+    NSMutableDictionary<NSString *, _MRRoute *> *routes = [MRRouter sharedInstance].routes;
+    NSURL* URL = [NSURL URLWithString:URLPattern];
+    _MRRoute* route = routes[URL.mr_body] ? : routes[URL.mr_fullScheme];
+    if (!route) {
+        NSString *className = [[MRRouter sharedInstance] assembledClassNameWithString:URL.host];
+        Class classType = [[MRRouter sharedInstance] matchObjectByName:className];
+        return classType != Nil;
+    } else {
+        return YES;
+    }
 }
 
 + (void)map:(NSString *)URLPattern toClassName:(NSString *)name {
@@ -299,7 +330,7 @@
 }
 
 - (NSString *) assembledClassNameWithString:(NSString *)string {
-    NSParameterAssert(string);
+    NSAssert(string, @"Illegal url pattern!");
     return [NSString stringWithFormat:@"%@%@%@", _prefix?:@"", string.capitalizedString, _postfix?:@""];
 }
 

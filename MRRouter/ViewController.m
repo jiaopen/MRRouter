@@ -44,7 +44,7 @@
     switch (indexPath.row) {
         case 0:
         {
-            [MRRouter openURL:TEST_URL2];
+            [MRRouter openURL:@"test://test?aa=11&bb=22"];
         }
             break;
         case 1:

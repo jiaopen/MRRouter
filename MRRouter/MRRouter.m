@@ -137,6 +137,7 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *plistMapDictionary;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, _MRRoute *> *routes;
+@property (nonatomic, strong) NSArray<NSString *> *defaultSubClasses;
 
 @end
 
@@ -155,7 +156,7 @@
     self = [super init];
     if (self) {
         _routes = [NSMutableDictionary dictionary];
-        _defaultClassType = [UIViewController class];
+        self.defaultClassType = [UIViewController class];
     }
     return self;
 }
@@ -227,8 +228,7 @@
     const char *className = [name cStringUsingEncoding:NSASCIIStringEncoding];
     __block Class objetClass = objc_getClass(className);
     if (!objetClass) {
-        NSArray<NSString *>* subClasses = [_defaultClassType subClasses];
-        [subClasses enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [_defaultSubClasses enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj.lowercaseString isEqualToString:name.lowercaseString]) {
                 objetClass = objc_getClass([obj cStringUsingEncoding:NSASCIIStringEncoding]);
             }
@@ -332,6 +332,12 @@
 - (NSString *) assembledClassNameWithString:(NSString *)string {
     NSAssert(string, @"Illegal url pattern!");
     return [NSString stringWithFormat:@"%@%@%@", _prefix?:@"", string.capitalizedString, _postfix?:@""];
+}
+
+- (void)setDefaultClassType:(Class)defaultClassType
+{
+    _defaultClassType = defaultClassType;
+    _defaultSubClasses = [defaultClassType subClasses];
 }
 
 @end

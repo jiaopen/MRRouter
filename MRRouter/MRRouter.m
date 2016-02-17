@@ -65,6 +65,14 @@
     return results;
 }
 
+- (void)parseParameters {
+    [self.mr_parameters enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        @try {
+            [self setValue:obj forKey:key];
+        } @catch (NSException *exception) {}
+    }];
+}
+
 @end
 
 @interface NSURL (MRBody)
@@ -308,6 +316,7 @@
 - (void)excuteDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock {
     NSObject *object = [self objectWithName:route.className parameters:route.parameters];
     object.mr_parameters = route.parameters;
+    [object parseParameters];
     if (prepareBlock) {
         prepareBlock(object);
     }
@@ -344,15 +353,12 @@
 
 @implementation NSObject (MRParameters)
 
-static char kAssociatedParametersKey;
-
 - (void)setMr_parameters:(NSDictionary *)mr_parameters {
-    objc_setAssociatedObject(self, &kAssociatedParametersKey, mr_parameters, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(mr_parameters), mr_parameters, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSDictionary *)mr_parameters
-{
-    return objc_getAssociatedObject(self, &kAssociatedParametersKey);
+- (NSDictionary *)mr_parameters {
+    return objc_getAssociatedObject(self, _cmd);
 }
 
 @end

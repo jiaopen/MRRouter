@@ -11,6 +11,9 @@
 
 @interface SecondViewController ()
 
+//@property (nonatomic, strong) NSString *ccc;
+@property (nonatomic, strong) NSString *ddd;
+
 @end
 
 @implementation SecondViewController

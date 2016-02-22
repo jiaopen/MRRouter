@@ -24,16 +24,19 @@ MRRouter以block的接口为基础，提供了object和URL的映射关系，降�
         [self.navigationController pushViewController:object animated:YES];
     };
 ```
+
 也可以注册特定的URL来实现特定的操作:
 ```objc
     [MRRouter registerURL:@"scheme://test2" executingBlock:^(NSString *sourceURL, NSDictionary *parameters) {
         //do sth.
     }];
 ```
-支持参数解析和自定义参数传递：
+
+支持参数解析和自定义参数传递，同时在下面这个例子中，对应的实例中如果定义了ccc和ddd名字的属性，将通过KVC自动赋值，实现跨页面参数传递：
 ```objc
     [MRRouter openURL:@"scheme://test3" parameters:@{@"ccc":@"333",@"ddd":@"444"}];
 ```
+
 也可以直接获取到URL映射的类：
 ```objc
     + (Class)matchClassWithURL:(NSString *)URLPattern;

@@ -10,7 +10,6 @@
 #import "MRRouter.h"
 #import "FreeMarketViewController.h"
 
-#define TEST_URL @"mgj://freemarket/clothing/trousers?aa=11&bb=22"
 #define TEST_URL2 @"mgj://test?aa=11&bb=22"
 #define TEST_URL3 @"mgj://second"
 #define TEST_URL4 @"mgj://hello"
@@ -28,11 +27,6 @@
         [self.navigationController pushViewController:object animated:YES];
     };
     [MRRouter sharedInstance].postfix = @"ViewController";
-    
-    [MRRouter registerURL:TEST_URL executingBlock:^(NSString *sourceURL, NSDictionary *parameters) {
-        [self.navigationController pushViewController:[[FreeMarketViewController alloc] init] animated:YES];
-    }];
-    [MRRouter map:TEST_URL4 toClassName:@"HelloViewController"];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -49,16 +43,20 @@
             break;
         case 1:
         {
-            [MRRouter openURL:TEST_URL3 parameters:@{@"ccc":@"333",@"ddd":@"444"}];
+            [MRRouter openURL:@"test://testforlist" parameters:@{@"ccc":@"333",@"ddd":@"444"}];
         }
             break;
         case 2:
         {
-            [MRRouter openURL:TEST_URL];
+            [MRRouter registerURL:@"mgj://freemarket/clothing/trousers?aa=11&bb=22" executingBlock:^(NSString *sourceURL, NSDictionary *parameters) {
+                [self.navigationController pushViewController:[[FreeMarketViewController alloc] init] animated:YES];
+            }];
+            [MRRouter openURL:@"mgj://freemarket/clothing/trousers?aa=11&bb=22"];
         }
             break;
         case 3:
         {
+            [MRRouter map:TEST_URL4 toClassName:@"HelloViewController"];
             [MRRouter openURL:TEST_URL4];
         }
             break;

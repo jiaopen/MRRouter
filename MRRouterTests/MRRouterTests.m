@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "MRRouter.h"
 
 @interface MRRouterTests : XCTestCase
 

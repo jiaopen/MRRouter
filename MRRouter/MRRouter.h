@@ -22,7 +22,7 @@ typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 + (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters;
 
 /**
- *  Asks the router to excute some operations by a URL.
+ *  Asks the router to execute some operations by a URL.
  *
  *  @param URLPattern    Some operations representing a URL.
  *  @param parameters    Information about the the URL. May be nil.
@@ -76,7 +76,7 @@ typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 @property (nonatomic, strong) NSString *mapFileName;
 
 /**
- *  You could set the default excute block of router by yourself. If you register the URL with a executingBlock(see registerURL:URLPattern:executingBlock), defaultExecutingBlock will never be excuted.
+ *  You could set the default execute block of router by yourself. If you register the URL with a executingBlock(see registerURL:URLPattern:executingBlock), defaultExecutingBlock will never be executed.
  */
 @property (nonatomic, copy) MRDefaultExecutingBlock defaultExecutingBlock;
 

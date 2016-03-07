@@ -14,8 +14,8 @@
 		8E35D6E41C3500F700EC2D34 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E35D6E31C3500F700EC2D34 /* Assets.xcassets */; };
 		8E35D6E71C3500F700EC2D34 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E35D6E51C3500F700EC2D34 /* LaunchScreen.storyboard */; };
 		8E35D6F21C3500F700EC2D34 /* MRRouterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E35D6F11C3500F700EC2D34 /* MRRouterTests.m */; };
-		8E35D6FE1C35011300EC2D34 /* MRRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E35D6FD1C35011300EC2D34 /* MRRouter.m */; };
 		8E35D7001C38D78C00EC2D34 /* route_map.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8E35D6FF1C38D78C00EC2D34 /* route_map.plist */; };
+		8E94C2A31C8D189200D60077 /* MRRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E94C2A21C8D189200D60077 /* MRRouter.m */; };
 		8EB2104D1C3B9B9F009A852F /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EB2104C1C3B9B9F009A852F /* TestViewController.m */; };
 		8EB210501C3BB20C009A852F /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EB2104F1C3BB20C009A852F /* SecondViewController.m */; };
 		8EB210531C3BB509009A852F /* FreeMarketViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EB210521C3BB509009A852F /* FreeMarketViewController.m */; };
@@ -46,9 +46,9 @@
 		8E35D6ED1C3500F700EC2D34 /* MRRouterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MRRouterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E35D6F11C3500F700EC2D34 /* MRRouterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MRRouterTests.m; sourceTree = "<group>"; };
 		8E35D6F31C3500F700EC2D34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E35D6FC1C35011300EC2D34 /* MRRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MRRouter.h; sourceTree = "<group>"; };
-		8E35D6FD1C35011300EC2D34 /* MRRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRRouter.m; sourceTree = "<group>"; };
 		8E35D6FF1C38D78C00EC2D34 /* route_map.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = route_map.plist; sourceTree = "<group>"; };
+		8E94C2A11C8D189200D60077 /* MRRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MRRouter.h; sourceTree = "<group>"; };
+		8E94C2A21C8D189200D60077 /* MRRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRRouter.m; sourceTree = "<group>"; };
 		8EB2104B1C3B9B9F009A852F /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
 		8EB2104C1C3B9B9F009A852F /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		8EB2104E1C3BB20C009A852F /* SecondViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
@@ -110,13 +110,13 @@
 				8EB210521C3BB509009A852F /* FreeMarketViewController.m */,
 				8EB210541C3BBD7C009A852F /* HelloViewController.h */,
 				8EB210551C3BBD7C009A852F /* HelloViewController.m */,
+				8E94C2A11C8D189200D60077 /* MRRouter.h */,
+				8E94C2A21C8D189200D60077 /* MRRouter.m */,
 				8E35D6E01C3500F700EC2D34 /* Main.storyboard */,
 				8E35D6E31C3500F700EC2D34 /* Assets.xcassets */,
 				8E35D6E51C3500F700EC2D34 /* LaunchScreen.storyboard */,
 				8E35D6E81C3500F700EC2D34 /* Info.plist */,
 				8E35D6D71C3500F700EC2D34 /* Supporting Files */,
-				8E35D6FC1C35011300EC2D34 /* MRRouter.h */,
-				8E35D6FD1C35011300EC2D34 /* MRRouter.m */,
 			);
 			path = MRRouter;
 			sourceTree = "<group>";
@@ -244,8 +244,8 @@
 				8EB210531C3BB509009A852F /* FreeMarketViewController.m in Sources */,
 				8E35D6DF1C3500F700EC2D34 /* ViewController.m in Sources */,
 				8EB210561C3BBD7C009A852F /* HelloViewController.m in Sources */,
-				8E35D6FE1C35011300EC2D34 /* MRRouter.m in Sources */,
 				8E35D6DC1C3500F700EC2D34 /* AppDelegate.m in Sources */,
+				8E94C2A31C8D189200D60077 /* MRRouter.m in Sources */,
 				8E35D6D91C3500F700EC2D34 /* main.m in Sources */,
 				8EB2104D1C3B9B9F009A852F /* TestViewController.m in Sources */,
 			);
@@ -375,6 +375,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MRRouter",
+				);
 				INFOPLIST_FILE = MRRouter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = juangua.MRRouter;
@@ -386,6 +391,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MRRouter",
+				);
 				INFOPLIST_FILE = MRRouter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = juangua.MRRouter;

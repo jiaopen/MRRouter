@@ -91,6 +91,11 @@
     return self.scheme.length ? [NSString stringWithFormat:@"%@://", self.scheme] : self.scheme;
 }
 
++ (NSURL *)URLWithStringByAddingPercentEncoding:(NSString *)string {
+    NSString* urlTextEscaped = [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    return [NSURL URLWithString:urlTextEscaped];
+}
+
 @end
 
 @interface _MRRoute : NSObject
@@ -129,7 +134,8 @@
 
 - (void)parseUrl:(NSString *)URLPattern {
     _pattern = URLPattern;
-    NSURL *URL = [NSURL URLWithString:URLPattern];
+    
+    NSURL *URL = [NSURL URLWithStringByAddingPercentEncoding:URLPattern];
     _scheme = URL.scheme;
     _host = URL.host;
     if (URL.pathComponents.count > 1) {
@@ -181,8 +187,7 @@
     if (!URLPattern.length && ![self canOpenURL:URLPattern]) {
         return;
     }
-    NSURL* URL = [NSURL URLWithString:URLPattern];
-    
+    NSURL* URL = [NSURL URLWithStringByAddingPercentEncoding:URLPattern];
     NSMutableDictionary *URLParameters = [NSMutableDictionary dictionary];
     
     if (URL.query.length) {
@@ -221,7 +226,7 @@
         return nil;
     }
     NSMutableDictionary<NSString *, _MRRoute *> *routes = [MRRouter sharedInstance].routes;
-    NSURL* URL = [NSURL URLWithString:URLPattern];
+    NSURL* URL = [NSURL URLWithStringByAddingPercentEncoding:URLPattern];
     _MRRoute* route = routes[URL.mr_body] ? : routes[URL.mr_fullScheme];
     if (!route) {
         route = [_MRRoute routeWithURL:URLPattern];
@@ -254,7 +259,7 @@
     if (route.host) {
         route.className = [[MRRouter sharedInstance] assembledClassNameWithString:route.host];
     }
-    [[MRRouter sharedInstance].routes setObject:route forKey:[NSURL URLWithString:URLPattern].mr_body];
+    [[MRRouter sharedInstance].routes setObject:route forKey:[NSURL URLWithStringByAddingPercentEncoding:URLPattern].mr_body];
 }
 
 + (void)removeURL:(NSString *)URLPattern {
@@ -266,7 +271,7 @@
         return NO;
     }
     NSMutableDictionary<NSString *, _MRRoute *> *routes = [MRRouter sharedInstance].routes;
-    NSURL* URL = [NSURL URLWithString:URLPattern];
+    NSURL* URL = [NSURL URLWithStringByAddingPercentEncoding:URLPattern];
     _MRRoute* route = routes[URL.mr_body] ? : routes[URL.mr_fullScheme];
     if (!route) {
         NSString *className = [[MRRouter sharedInstance] assembledClassNameWithString:URL.host];
@@ -280,7 +285,7 @@
 + (void)map:(NSString *)URLPattern toClassName:(NSString *)name {
     _MRRoute* route = [_MRRoute routeWithURL:URLPattern];
     route.className = name;
-    [[MRRouter sharedInstance].routes setObject:route forKey:[NSURL URLWithString:URLPattern].mr_body];
+    [[MRRouter sharedInstance].routes setObject:route forKey:[NSURL URLWithStringByAddingPercentEncoding:URLPattern].mr_body];
 }
 
 - (void)setMapFileName:(NSString *)mapFileName {

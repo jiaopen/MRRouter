@@ -49,7 +49,9 @@
         case 2:
         {
             [MRRouter registerURL:@"mgj://freemarket/clothing/trousers?aa=11&bb=22" executingBlock:^(NSString *sourceURL, NSDictionary *parameters) {
-                [self.navigationController pushViewController:[[FreeMarketViewController alloc] init] animated:YES];
+                FreeMarketViewController *fvc = [[FreeMarketViewController alloc] init];
+                [self.navigationController pushViewController:fvc animated:YES];
+                return fvc;
             }];
             [MRRouter openURL:@"mgj://freemarket/clothing/trousers?aa=11&bb=22"];
         }

@@ -10,7 +10,7 @@
 
 typedef void (^MRPrepareBlock)(id object);
 typedef void (^MRCompleteBlock)();
-typedef void (^MRExecutingBlock)(NSString *sourceURL, NSDictionary *parameters);
+typedef id (^MRExecutingBlock)(NSString *sourceURL, NSDictionary *parameters);
 typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 
 @interface MRRouter : NSObject

@@ -206,7 +206,9 @@
     _MRRoute* route = [[MRRouter sharedInstance] routeWithURL:URLPattern];
     route.parameters = [URLParameters copy];
     if (route.executingBlock) {
-        route.executingBlock(URLPattern, URLParameters);
+        id object = route.executingBlock(URLPattern, URLParameters);
+        [object setValue:URLParameters forKey:@"mr_parameters"];
+        [object parseParameters];
     } else {
         [[MRRouter sharedInstance] executeDefaultBlock:route prepareBlock:prepareBlock completeBlock:completeBlock];
     }
@@ -320,7 +322,6 @@
 
 - (void)executeDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock {
     NSObject *object = [self objectWithName:route.className parameters:route.parameters];
-    object.mr_parameters = route.parameters;
     [object parseParameters];
     if (prepareBlock) {
         prepareBlock(object);

@@ -41,6 +41,16 @@ typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 + (Class)matchClassWithURL:(NSString *)URLPattern;
 
 /**
+ *  Return the object which is alloc elsewhere by the URL.
+ *
+ *  @param URLPattern Asks the router to get an object.
+ *
+ *  @return The object which is alloced elsewhere, if it is not exist, return nil;
+ */
++ (id)existedInstanceWithURL:(NSString *)URLPattern;
+
+
+/**
  *  Register some operations with URL.
  *
  *  @param URLPattern     Some operations representing a URL. If URLPattern already exists in the router, executingBlock takes its place.

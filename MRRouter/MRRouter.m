@@ -151,6 +151,7 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *plistMapDictionary;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, _MRRoute *> *routes;
+@property (nonatomic, strong) NSMapTable<NSString *, id> *instanceMap;
 @property (nonatomic, strong) NSArray<NSString *> *defaultSubClasses;
 
 @end
@@ -195,8 +196,8 @@
         for (NSString* paramString in paremeterDataArray) {
             NSArray* paramArr = [paramString componentsSeparatedByString:@"="];
             if (paramArr.count > 1) {
-                NSString* key = [[paramArr objectAtIndex:0] stringByRemovingPercentEncoding];
-                NSString* value = [[paramArr objectAtIndex:1] stringByRemovingPercentEncoding];
+                NSString* key = [[paramArr objectAtIndex:0] stringByRemovingPercentEncoding] ?: @"";
+                NSString* value = [[paramArr objectAtIndex:1] stringByRemovingPercentEncoding] ?: @"";
                 [URLParameters setObject:value forKey:key];
             }
         }
@@ -206,11 +207,13 @@
     _MRRoute* route = [[MRRouter sharedInstance] routeWithURL:URLPattern];
     route.parameters = [URLParameters copy];
     if (route.executingBlock) {
-        id object = route.executingBlock(URLPattern, URLParameters);
+       id object = route.executingBlock(URLPattern, URLParameters);
         [object setValue:URLParameters forKey:@"mr_parameters"];
         [object parseParameters];
+        [[MRRouter sharedInstance].instanceMap setObject:object forKey:route.body];
     } else {
-        [[MRRouter sharedInstance] executeDefaultBlock:route prepareBlock:prepareBlock completeBlock:completeBlock];
+        NSObject *object = [[MRRouter sharedInstance] executeDefaultBlock:route prepareBlock:prepareBlock completeBlock:completeBlock];
+        [[MRRouter sharedInstance].instanceMap setObject:object forKey:route.body];
     }
 }
 
@@ -221,6 +224,12 @@
     } else {
         return [[MRRouter sharedInstance] matchObjectByName:[[MRRouter sharedInstance] assembledClassNameWithString:route.host]];
     }
+}
+
++ (id)existedInstanceWithURL:(NSString *)URLPattern
+{
+    NSURL* URL = [NSURL URLWithStringByAddingPercentEncoding:URLPattern];
+    return [[MRRouter sharedInstance].instanceMap objectForKey:URL.mr_body];
 }
 
 - (_MRRoute *) routeWithURL:(NSString *)URLPattern {
@@ -320,7 +329,7 @@
     
 }
 
-- (void)executeDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock {
+- (NSObject *)executeDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock {
     NSObject *object = [self objectWithName:route.className parameters:route.parameters];
     [object parseParameters];
     if (prepareBlock) {
@@ -332,6 +341,7 @@
     if (completeBlock) {
         completeBlock(object);
     }
+    return object;
 }
 
 - (NSObject *)objectWithName:(NSString *)name parameters:(NSDictionary *)parameters {
@@ -353,6 +363,15 @@
 {
     _defaultClassType = defaultClassType;
     _defaultSubClasses = [defaultClassType subClasses];
+}
+
+- (NSMapTable<NSString *,NSValue *> *)instanceMap
+{
+    if (!_instanceMap)
+    {
+        _instanceMap = [NSMapTable strongToWeakObjectsMapTable];
+    }
+    return _instanceMap;
 }
 
 @end

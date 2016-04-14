@@ -110,5 +110,6 @@ typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 @interface NSObject (MRParameters)
 
 @property (nonatomic, copy) NSDictionary *mr_parameters;
+@property (nonatomic, copy) NSString *mr_url;
 
 @end

@@ -144,6 +144,33 @@
     _body = URL.mr_body;
 }
 
+- (void)setParameters:(NSDictionary *)parameters
+{
+    _parameters = parameters;
+    if (self.body.length)
+    {
+        NSMutableString *URL = [[NSMutableString alloc] initWithString:self.body];
+        __block NSUInteger idx = 0;
+        [parameters enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            if ([key isKindOfClass:[NSString class]] &&
+                ([obj isKindOfClass:[NSString class]] || [obj isKindOfClass:[NSNumber class]]))
+            {
+                if (idx == 0)
+                {
+                    [URL appendString:@"?"];
+                }
+                else
+                {
+                    [URL appendString:@"&"];
+                }
+                [URL appendFormat:@"%@=%@", key, obj];
+            }
+            idx++;
+        }];
+        self.pattern = [URL copy];
+    }
+}
+
 @end
 
 
@@ -207,8 +234,9 @@
     _MRRoute* route = [[MRRouter sharedInstance] routeWithURL:URLPattern];
     route.parameters = [URLParameters copy];
     if (route.executingBlock) {
-       id object = route.executingBlock(URLPattern, URLParameters);
+        id object = route.executingBlock(URLPattern, URLParameters);
         [object setValue:URLParameters forKey:@"mr_parameters"];
+        [object setValue:route.pattern forKey:@"mr_url"];
         [object parseParameters];
         [[MRRouter sharedInstance].instanceMap setObject:object forKey:route.body];
     } else {
@@ -331,6 +359,7 @@
 
 - (NSObject *)executeDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock {
     NSObject *object = [self objectWithName:route.className parameters:route.parameters];
+    [object setValue:route.pattern forKey:@"mr_url"];
     [object parseParameters];
     if (prepareBlock) {
         prepareBlock(object);
@@ -365,7 +394,7 @@
     _defaultSubClasses = [defaultClassType subClasses];
 }
 
-- (NSMapTable<NSString *,NSValue *> *)instanceMap
+- (NSMapTable<NSString *, id> *)instanceMap
 {
     if (!_instanceMap)
     {
@@ -386,4 +415,11 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
+- (void)setMr_url:(NSString *)mr_url {
+    objc_setAssociatedObject(self, @selector(mr_url), mr_url, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSString *)mr_url {
+    return objc_getAssociatedObject(self, _cmd);
+}
 @end

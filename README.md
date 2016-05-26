@@ -3,7 +3,7 @@
 [![License](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://github.com/jiaopen/MRRouter/blob/master/LICENSE.md)
 
 ## About
-MRRouter以block的接口为基础，提供了object和URL的映射关系，降低代码耦合。网上已经有很多这种router类型的轮子，但是大多数在使用的时候需要手动来建立映射关系，API的设计也总觉得有些地方不合意，所以实现了这么一个新轮子。
+MRRouter以block的接口为基础，结合Objective-C的特性，提供了object和URL的映射关系，降低代码耦合。 
 
 ## Features
 * API的设计很简单，功能相对齐全

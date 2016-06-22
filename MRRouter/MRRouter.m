@@ -239,7 +239,7 @@
         }
         id object = route.executingBlock(URLPattern, URLParameters);
         [object setValue:URLParameters forKey:@"mr_parameters"];
-        [object setValue:route.pattern forKey:@"mr_url"];
+        [object setValue:URL.absoluteString forKey:@"mr_url"];
         [object parseParameters];
         if (completeBlock) {
             completeBlock(object);

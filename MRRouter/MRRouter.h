@@ -10,6 +10,7 @@
 
 typedef void (^MRPrepareBlock)(id object);
 typedef void (^MRCompleteBlock)();
+typedef void (^MRRouterRespondBlock)(id result);
 typedef id (^MRExecutingBlock)(NSString *sourceURL, NSDictionary *parameters);
 typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 
@@ -21,6 +22,8 @@ typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 
 + (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters;
 
++ (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters respondBlock:(MRRouterRespondBlock)respondBlock;
+
 /**
  *  Asks the router to execute some operations by a URL.
  *
@@ -30,6 +33,18 @@ typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
  *  @param completeBlock A block object containing the operation after open URL. May be nil.
  */
 + (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock;
+
+/**
+ *  Asks the router to execute some operations by a URL.
+ *
+ *  @param URLPattern    Some operations representing a URL.
+ *  @param parameters    Information about the the URL. May be nil.
+ *  @param prepareBlock  A block object containing the operation before open URL. May be nil.
+ *  @param completeBlock A block object containing the operation after open URL. May be nil.
+ *  @param respondBlock Target object will invoke this respond block which implenment by source object.
+ */
++ (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock respondBlock:(MRRouterRespondBlock)respondBlock;
+
 
 /**
  *  Return the object which match the URL.
@@ -111,5 +126,6 @@ typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
 
 @property (nonatomic, copy) NSDictionary *mr_parameters;
 @property (nonatomic, copy) NSString *mr_url;
+@property (nonatomic, copy) MRRouterRespondBlock mr_respondBlock;
 
 @end

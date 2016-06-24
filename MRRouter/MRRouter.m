@@ -211,7 +211,15 @@
     return [self openURL:URLPattern parameters:parameters prepareBlock:nil completeBlock:nil];
 }
 
++ (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters respondBlock:(MRRouterRespondBlock)respondBlock{
+    return [self openURL:URLPattern parameters:parameters prepareBlock:nil completeBlock:nil respondBlock:respondBlock];
+}
+
 + (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock{
+    return [self openURL:URLPattern parameters:parameters prepareBlock:prepareBlock completeBlock:completeBlock respondBlock:nil];
+}
+
++ (void)openURL:(NSString *)URLPattern parameters:(NSDictionary *)parameters prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock respondBlock:(MRRouterRespondBlock)respondBlock{
     if (!URLPattern.length && ![self canOpenURL:URLPattern]) {
         return;
     }
@@ -240,13 +248,17 @@
         id object = route.executingBlock(URLPattern, URLParameters);
         [object setValue:URLParameters forKey:@"mr_parameters"];
         [object setValue:URL.absoluteString forKey:@"mr_url"];
+        if (respondBlock)
+        {
+            [object setValue:respondBlock forKey:@"mr_respondBlock"];
+        }
         [object parseParameters];
         if (completeBlock) {
             completeBlock(object);
         }
         [[MRRouter sharedInstance].instanceMap setObject:object forKey:route.body];
     } else {
-        NSObject *object = [[MRRouter sharedInstance] executeDefaultBlock:route prepareBlock:prepareBlock completeBlock:completeBlock];
+        NSObject *object = [[MRRouter sharedInstance] executeDefaultBlock:route prepareBlock:prepareBlock completeBlock:completeBlock respondBlock:respondBlock];
         [[MRRouter sharedInstance].instanceMap setObject:object forKey:route.body];
     }
 }
@@ -363,9 +375,13 @@
     
 }
 
-- (NSObject *)executeDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock {
+- (NSObject *)executeDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock respondBlock:(MRRouterRespondBlock)respondBlock {
     NSObject *object = [self objectWithName:route.className parameters:route.parameters];
     [object setValue:route.pattern forKey:@"mr_url"];
+    if (respondBlock)
+    {
+        [object setValue:respondBlock forKey:@"mr_respondBlock"];
+    }
     [object parseParameters];
     if (prepareBlock) {
         prepareBlock(object);
@@ -426,6 +442,16 @@
 }
 
 - (NSString *)mr_url {
+    return objc_getAssociatedObject(self, _cmd);
+}
+
+- (void)setMr_respondBlock:(MRRouterRespondBlock)mr_respondBlock
+{
+    objc_setAssociatedObject(self, @selector(mr_respondBlock), mr_respondBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MRRouterRespondBlock)mr_respondBlock
+{
     return objc_getAssociatedObject(self, _cmd);
 }
 @end

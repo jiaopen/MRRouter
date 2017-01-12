@@ -136,12 +136,12 @@
     _pattern = URLPattern;
     
     NSURL *URL = [NSURL URLWithStringByAddingPercentEncoding:URLPattern];
-    _scheme = URL.scheme.lowercaseString;
-    _host = URL.host.lowercaseString;
+    _scheme = URL.scheme;
+    _host = URL.host;
     if (URL.pathComponents.count > 1) {
         _paths = [URL.pathComponents subarrayWithRange:NSMakeRange(1, URL.pathComponents.count-1)];
     }
-    _body = URL.mr_body.lowercaseString;
+    _body = URL.mr_body;
 }
 
 - (void)setParameters:(NSDictionary *)parameters
@@ -247,7 +247,10 @@
         }
         id object = route.executingBlock(URLPattern, URLParameters);
         [object setValue:URLParameters forKey:@"mr_parameters"];
-        [object setValue:URL.absoluteString forKey:@"mr_url"];
+        if (![object valueForKey:@"mr_url"])
+        {
+            [object setValue:URL.absoluteString forKey:@"mr_url"];
+        }
         if (respondBlock)
         {
             [object setValue:respondBlock forKey:@"mr_respondBlock"];
@@ -282,7 +285,6 @@
     if (!URLPattern.length) {
         return nil;
     }
-    URLPattern = URLPattern.lowercaseString;
     NSMutableDictionary<NSString *, _MRRoute *> *routes = [MRRouter sharedInstance].routes;
     NSURL* URL = [NSURL URLWithStringByAddingPercentEncoding:URLPattern];
     _MRRoute* route = routes[URL.mr_body] ? : routes[URL.mr_fullScheme];
@@ -378,7 +380,6 @@
 
 - (NSObject *)executeDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock respondBlock:(MRRouterRespondBlock)respondBlock {
     NSObject *object = [self objectWithName:route.className parameters:route.parameters];
-    NSAssert(object, @"Could not initialize an instance from the url: %@", route.pattern);
     [object setValue:route.pattern forKey:@"mr_url"];
     if (respondBlock)
     {

@@ -380,7 +380,10 @@
 
 - (NSObject *)executeDefaultBlock:(_MRRoute *)route prepareBlock:(MRPrepareBlock)prepareBlock completeBlock:(MRCompleteBlock)completeBlock respondBlock:(MRRouterRespondBlock)respondBlock {
     NSObject *object = [self objectWithName:route.className parameters:route.parameters];
-    [object setValue:route.pattern forKey:@"mr_url"];
+    if (![object valueForKey:@"mr_url"])
+    {
+        [object setValue:route.pattern forKey:@"mr_url"];
+    }
     if (respondBlock)
     {
         [object setValue:respondBlock forKey:@"mr_respondBlock"];

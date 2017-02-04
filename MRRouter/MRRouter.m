@@ -69,6 +69,9 @@
     [self.mr_parameters enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
         @try {
             objc_property_t property = class_getProperty(self.class, key.UTF8String);
+            if (!property){
+                return;
+            }
             //属性类型
             NSString *propertyAttribute = [NSString stringWithUTF8String:property_getAttributes(property)];
             NSArray* attributeItems = [propertyAttribute componentsSeparatedByString:@","];

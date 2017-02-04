@@ -28,12 +28,12 @@
             Class classType = classes[i];
             
             if ( class_isMetaClass( classType ) )
-                continue;
+            continue;
             
             Class superClass = class_getSuperclass( classType );
             
             if ( nil == superClass )
-                continue;
+            continue;
             
             [classNames addObject:[NSString stringWithUTF8String:class_getName(classType)]];
         }
@@ -54,10 +54,10 @@
     for (NSString *className in [self loadedClassNames]) {
         Class classType = NSClassFromString( className );
         if (classType == self)
-            continue;
+        continue;
         
         if (NO == [classType isSubclassOfClass:self])
-            continue;
+        continue;
         
         [results addObject:[classType description]];
     }
@@ -66,11 +66,74 @@
 }
 
 - (void)parseParameters {
-    [self.mr_parameters enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+    [self.mr_parameters enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
         @try {
-            [self setValue:obj forKey:key];
+            objc_property_t property = class_getProperty(self.class, key.UTF8String);
+            //属性类型
+            NSString *propertyAttribute = [NSString stringWithUTF8String:property_getAttributes(property)];
+            NSArray* attributeItems = [propertyAttribute componentsSeparatedByString:@","];
+            NSString *attributeString = [NSString stringWithUTF8String:property_getAttributes(property)];
+            NSString *typeString = [[attributeString componentsSeparatedByString:@","] objectAtIndex:0];
+            //类名，非基础类型
+            NSString *classNameString = [self mr_getClassNameFromAttributeString:typeString];
+            
+            if ([attributeItems containsObject:@"R"]) {//如果属性是只读的，就不要进行解析了
+                return;
+            }
+            //基础类型
+            if ([value isKindOfClass:[NSNumber class]]) {
+                //当对应的属性为基础类型或者 NSNumber 时才处理
+                if ([typeString isEqualToString:@"Td"] || [typeString isEqualToString:@"Ti"] || [typeString isEqualToString:@"Tf"] || [typeString isEqualToString:@"Tl"] || [typeString isEqualToString:@"Tc"] || [typeString isEqualToString:@"Ts"] || [typeString isEqualToString:@"TI"]|| [typeString isEqualToString:@"Tq"] || [typeString isEqualToString:@"TQ"] || [typeString isEqualToString:@"TB"] ||[classNameString isEqualToString:@"NSNumber"]) {
+                    [self setValue:value forKey:key];
+                }
+                else {
+                    if ([classNameString isEqualToString:@"NSString"]) {
+                        [self setValue:[value stringValue] forKey:key];
+                    }
+                    else{
+                        NSLog(@"type error -- name:%@ attribute:%@ ", key, typeString);
+                    }
+                }
+            }
+            //字符串
+            else if ([value isKindOfClass:[NSString class]]) {
+                if ([classNameString isEqualToString:@"NSString"]) {
+                    [self setValue:value forKey:key];
+                }
+                else if ([classNameString isEqualToString:@"NSMutableString"]) {
+                    [self setValue:[NSMutableString stringWithString:value] forKey:key];
+                }
+                //对应的属性为基础类型或者NSNumber时，先转成 nsnumber
+                else if ([classNameString isEqualToString:@"NSNumber"] || [typeString isEqualToString:@"Td"] || [typeString isEqualToString:@"Ti"] || [typeString isEqualToString:@"Tf"] || [typeString isEqualToString:@"Tl"] || [typeString isEqualToString:@"Tc"] || [typeString isEqualToString:@"Ts"] || [typeString isEqualToString:@"TI"]|| [typeString isEqualToString:@"Tq"] || [typeString isEqualToString:@"TQ"] || [typeString isEqualToString:@"TB"]) {
+                    
+                    NSNumberFormatter *formater = [[NSNumberFormatter alloc] init];
+                    NSNumber *number = [formater numberFromString:value];
+                    if (number)
+                    {
+                        [self setValue:number forKey:key];
+                    }
+                }
+            }
+            
+            //其它不处理
+            else
+            {
+                [self setValue:value forKey:key];
+            }
+            
         } @catch (NSException *exception) {}
     }];
+}
+
+- (NSString *)mr_getClassNameFromAttributeString:(NSString *)attributeString {
+    NSString *className = nil;
+    NSScanner *scanner = [NSScanner scannerWithString: attributeString];
+    [scanner scanUpToString:@"T" intoString: nil];
+    [scanner scanString:@"T" intoString:nil];
+    if ([scanner scanString:@"@\"" intoString: &className]){
+        [scanner scanUpToCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\"<"] intoString:&className];
+    }
+    return className;
 }
 
 @end

@@ -28,12 +28,12 @@
             Class classType = classes[i];
             
             if ( class_isMetaClass( classType ) )
-            continue;
+                continue;
             
             Class superClass = class_getSuperclass( classType );
             
             if ( nil == superClass )
-            continue;
+                continue;
             
             [classNames addObject:[NSString stringWithUTF8String:class_getName(classType)]];
         }
@@ -54,10 +54,12 @@
     for (NSString *className in [self loadedClassNames]) {
         Class classType = NSClassFromString( className );
         if (classType == self)
-        continue;
-        
+            continue;
+        //10.3beta版本的诡异crash，WKNS开头的类不是NSObject，无法调用isSubclassOfClass，暂时这么处理
+        if ([NSStringFromClass(classType) containsString:@"WKNS"])
+            continue;
         if (NO == [classType isSubclassOfClass:self])
-        continue;
+            continue;
         
         [results addObject:[classType description]];
     }
@@ -69,7 +71,8 @@
     [self.mr_parameters enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
         @try {
             objc_property_t property = class_getProperty(self.class, key.UTF8String);
-            if (!property){
+            if (!property)
+            {
                 return;
             }
             //属性类型

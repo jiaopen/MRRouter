@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 typedef void (^MRPrepareBlock)(id object);
-typedef void (^MRCompleteBlock)();
+typedef void (^MRCompleteBlock)(id object);
 typedef void (^MRRouterRespondBlock)(id result);
 typedef id (^MRExecutingBlock)(NSString *sourceURL, NSDictionary *parameters);
 typedef void (^MRDefaultExecutingBlock)(id object, NSDictionary *parameters);
